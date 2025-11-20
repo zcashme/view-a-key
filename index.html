@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Zcash Viewing Key</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #040712;
+      --card: #080b1a;
+      --card-alt: #0b1020;
+      --accent: #5b5fff;
+      --accent-soft: #3438ff;
+      --accent-text: #ffffff;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --danger: #f97373;
+      --input-bg: #050814;
+      --input-border: #20263a;
+      --input-border-focus: #4f46e5;
+      --radius-lg: 16px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background: radial-gradient(circle at top left, #111827 0, #020617 45%, #000 100%);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    .shell {
+      max-width: 1100px;
+      margin: 40px auto;
+      padding: 0 24px 48px;
+    }
+
+    .panel {
+      background: radial-gradient(circle at top left, #111827 0, #020617 55%, #020617 100%);
+      border-radius: 24px;
+      padding: 32px 40px 32px;
+      box-shadow:
+        0 25px 50px rgba(0,0,0,0.6),
+        0 0 0 1px rgba(148,163,184,0.07);
+    }
+
+    h1 {
+      font-size: 24px;
+      margin: 0 0 4px;
+    }
+
+    .subtitle {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+
+    .subtitle code {
+      font-size: 12px;
+      padding: 1px 4px;
+      border-radius: 4px;
+      background: rgba(15,23,42,0.9);
+      border: 1px solid rgba(30,64,175,0.6);
+    }
+
+    .subtitle ul {
+      margin: 6px 0 0 18px;
+      padding: 0;
+    }
+
+    .subtitle li {
+      margin: 0;
+    }
+
+    .top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .status-line {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .status-line span.key {
+      color: #9ca3ff;
+    }
+
+    .status-line span.error {
+      color: var(--danger);
+    }
+
+    .pill-btn {
+      border: none;
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      background: #111827;
+      color: var(--text);
+      border: 1px solid rgba(129,140,248,0.4);
+    }
+
+    .pill-btn:disabled {
+      opacity: 0.5;
+      cursor: default;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      margin-top: 16px;
+      margin-bottom: 4px;
+    }
+
+    textarea,
+    input[type="number"],
+    input[type="text"] {
+      width: 100%;
+      border-radius: 10px;
+      border: 1px solid var(--input-border);
+      background: var(--input-bg);
+      color: var(--text);
+      padding: 10px 12px;
+      font-family: inherit;
+      font-size: 13px;
+      outline: none;
+    }
+
+    textarea {
+      min-height: 150px;
+      resize: vertical;
+    }
+
+    textarea:focus,
+    input:focus {
+      border-color: var(--input-border-focus);
+      box-shadow: 0 0 0 1px rgba(79,70,229,0.5);
+    }
+
+    .hint {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .height-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .height-row .field {
+      flex: 1;
+    }
+
+    .primary-btn {
+      border: none;
+      border-radius: 999px;
+      padding: 10px 24px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-soft) 100%);
+      color: var(--accent-text);
+      box-shadow:
+        0 10px 30px rgba(79,70,229,0.45),
+        0 0 0 1px rgba(129,140,248,0.3);
+      transition: transform 0.05s ease, box-shadow 0.05s ease, opacity 0.2s ease;
+    }
+
+    .primary-btn:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow:
+        0 18px 40px rgba(79,70,229,0.6),
+        0 0 0 1px rgba(165,180,252,0.5);
+    }
+
+    .primary-btn:disabled {
+      opacity: 0.6;
+      cursor: default;
+      box-shadow: 0 0 0 1px rgba(129,140,248,0.4);
+    }
+
+    .status-msg {
+      margin-top: 8px;
+      font-size: 12px;
+      color: var(--muted);
+      min-height: 16px;
+      white-space: pre-wrap;
+    }
+
+    .status-msg.error {
+      color: var(--danger);
+    }
+
+    .output-card {
+      margin-top: 24px;
+      background: var(--card-alt);
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(31,41,55,0.9);
+      padding: 14px 16px;
+    }
+
+    .output-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .output-header strong {
+      color: #e5e7ff;
+    }
+
+    .tx-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .tx-card {
+    background: #020617;
+    border-radius: 14px;
+    border: 1px solid #111827;
+    padding: 12px 14px;
+    font-size: 13px;          /* bigger */
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    overflow: hidden;         /* nothing escapes the box */
+
+    /* New: subtle default shadow + smooth hover transitions */
+    box-shadow:
+        0 8px 20px rgba(15, 23, 42, 0.55),
+        0 0 0 1px rgba(15, 23, 42, 0.9);
+    transition:
+        transform 0.12s ease,
+        box-shadow 0.12s ease,
+        background 0.12s ease,
+        border-color 0.12s ease;
+    }
+
+    /* ADD this block right after .tx-card */
+    .tx-card:hover {
+    transform: translateY(-2px);
+    background: radial-gradient(circle at top left, #020617 0, #020617 40%, #020617 100%);
+    border-color: rgba(129, 140, 248, 0.6);
+    box-shadow:
+        0 18px 45px rgba(15, 23, 42, 0.9),
+        0 0 0 1px rgba(129, 140, 248, 0.55);
+    }
+
+    .tx-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+    }
+
+    .tx-card-header .tx-id {
+      font-family: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+      font-size: 12px;
+      color: #c7d2fe;
+      word-break: break-all;        /* wrap long ids */
+      overflow-wrap: anywhere;
+    }
+
+    .tx-card-header .tx-amount {
+      font-weight: 600;
+      color: #bbf7d0;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .tx-meta-row {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .tx-meta-label {
+      font-weight: 500;
+      color: #9ca3ff;
+    }
+
+    .tx-output {
+      margin-top: 4px;
+      padding-top: 4px;
+      border-top: 1px dashed rgba(55,65,81,0.8);
+    }
+
+    .tx-output + .tx-output {
+      margin-top: 6px;
+    }
+
+    .tx-output-heading {
+      font-size: 12px;
+      color: #a5b4fc;
+      margin-bottom: 2px;
+    }
+
+    .tx-output-field {
+      font-size: 12px;              /* bigger */
+      color: var(--muted);
+      margin-top: 1px;
+      white-space: normal;          /* allow wrapping */
+      word-break: break-all;        /* wrap long addresses/memos */
+      overflow-wrap: anywhere;
+    }
+
+    .tx-output-field span.label {
+      color: #64748b;
+      font-weight: 500;
+    }
+
+    .raw-toggle {
+      margin-top: 10px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      align-items: center;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .raw-btn {
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.6);
+      padding: 4px 10px;
+      background: transparent;
+      font-size: 11px;
+      color: var(--muted);
+      cursor: pointer;
+    }
+
+    .raw-btn:hover {
+      border-color: rgba(191,219,254,0.9);
+      color: #e5e7eb;
+    }
+
+    pre {
+      margin: 0;
+      margin-top: 8px;
+      padding: 12px;
+      border-radius: 10px;
+      background: #020617;
+      border: 1px solid #111827;
+      font-size: 12px;
+      line-height: 1.4;
+      color: #e5e7eb;
+      overflow: auto;
+      max-height: 420px;
+      white-space: pre;
+    }
+
+    code {
+      font-family: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+    }
+
+    @media (max-width: 768px) {
+      .panel {
+        padding: 24px 18px 24px;
+      }
+      .height-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="panel">
+      <h1>Zcash Viewing Key</h1>
+      <div class="subtitle">
+        <div>
+          Paste a Unified Viewing Key (UFVK), choose a start (birthday) height,
+          then click <strong>Start importing</strong>. The backend will:
+        </div>
+        <ul>
+          <li>talk to lightwalletd at <code>zec.rocks:443</code>, and</li>
+          <li>run <code>zcash-devtool</code> to scan your UFVK.</li>
+        </ul>
+      </div>
+
+      <div class="top-row">
+        <div class="status-line">
+          <span class="key">chain:</span> <span id="chainStatus" class="error">error</span>
+          <span style="opacity:.35;">·</span>
+          <span class="key">height:</span> <span id="heightStatus" class="error">error</span>
+        </div>
+        <button type="button" class="pill-btn" id="refreshHeightBtn">Refresh height</button>
+      </div>
+
+      <form id="vkForm">
+        <label for="viewKey">Zcash Viewing Key (UFVK)</label>
+        <textarea id="viewKey" name="viewKey" placeholder="uview1..." required></textarea>
+        <div class="hint">
+          This never leaves your machine if you keep this app running locally.
+        </div>
+
+        <div class="height-row">
+          <div class="field">
+            <label for="birthday">Start (birthday) height</label>
+            <input id="birthday" name="birthday" type="number" placeholder="3000000" required />
+          </div>
+          <div>
+            <label style="visibility:hidden;">&nbsp;</label>
+            <button type="submit" id="startBtn" class="primary-btn">Start importing</button>
+          </div>
+        </div>
+
+        <div class="hint">
+          You can use any label for this wallet; it only affects the folder &amp; export filenames.
+        </div>
+        <input id="walletName" name="walletName" type="text" value="test" style="display:none;" />
+
+        <div id="statusMsg" class="status-msg"></div>
+      </form>
+
+      <div id="outputSection" class="output-card" style="display:none;">
+        <div class="output-header">
+          <div>
+            <strong>Transactions</strong>
+            <span id="outputMeta"></span>
+          </div>
+          <div class="hint">Output of <code>list-tx</code></div>
+        </div>
+
+        <!-- Structured cards -->
+        <div id="structuredOutput" class="tx-list"></div>
+
+        <!-- Raw text toggle -->
+        <div class="raw-toggle">
+          <span>Debug / raw output</span>
+          <button type="button" id="toggleRawBtn" class="raw-btn">Show raw text</button>
+        </div>
+
+        <!-- Raw text -->
+        <pre id="rawOutput" style="display:none;"><code></code></pre>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const API_BASE = "http://172.206.17.233:5000";
+
+    const chainStatus = document.getElementById("chainStatus");
+    const heightStatus = document.getElementById("heightStatus");
+    const refreshHeightBtn = document.getElementById("refreshHeightBtn");
+
+    const vkForm = document.getElementById("vkForm");
+    const viewKeyInput = document.getElementById("viewKey");
+    const birthdayInput = document.getElementById("birthday");
+    const walletNameInput = document.getElementById("walletName");
+    const startBtn = document.getElementById("startBtn");
+    const statusMsg = document.getElementById("statusMsg");
+
+    const outputSection = document.getElementById("outputSection");
+    const outputMeta = document.getElementById("outputMeta");
+    const structuredOutput = document.getElementById("structuredOutput");
+    const rawOutput = document.getElementById("rawOutput").querySelector("code");
+    const rawOutputWrapper = document.getElementById("rawOutput");
+    const toggleRawBtn = document.getElementById("toggleRawBtn");
+
+    function setStatus(msg, isError = false) {
+      statusMsg.textContent = msg || "";
+      statusMsg.classList.toggle("error", !!isError);
+    }
+
+    async function refreshHeight() {
+      try {
+        refreshHeightBtn.disabled = true;
+        chainStatus.textContent = "loading…";
+        heightStatus.textContent = "loading…";
+        const res = await fetch(`${API_BASE}/api/height`);
+        const data = await res.json();
+        if (data.status === "ok") {
+          chainStatus.textContent = data.chain || "zec.rocks";
+          heightStatus.textContent = data.height ?? "unknown";
+          chainStatus.classList.remove("error");
+          heightStatus.classList.remove("error");
+        } else {
+          chainStatus.textContent = "error";
+          heightStatus.textContent = "error";
+          chainStatus.classList.add("error");
+          heightStatus.classList.add("error");
+        }
+      } catch (e) {
+        chainStatus.textContent = "error";
+        heightStatus.textContent = "error";
+        chainStatus.classList.add("error");
+        heightStatus.classList.add("error");
+      } finally {
+        refreshHeightBtn.disabled = false;
+      }
+    }
+
+    refreshHeightBtn.addEventListener("click", refreshHeight);
+
+    function shortenTxid(txid) {
+      if (!txid || txid.length <= 18) return txid || "";
+      return txid.slice(0, 8) + "…" + txid.slice(-8);
+    }
+
+    function renderTransactions(txs) {
+      structuredOutput.innerHTML = "";
+
+      if (!txs || !txs.length) {
+        const empty = document.createElement("div");
+        empty.style.fontSize = "12px";
+        empty.style.color = "#9ca3af";
+        empty.textContent = "No transactions found for this key and birthday range.";
+        structuredOutput.appendChild(empty);
+        return;
+      }
+
+      txs.forEach((tx) => {
+        const card = document.createElement("div");
+        card.className = "tx-card";
+
+        const header = document.createElement("div");
+        header.className = "tx-card-header";
+
+        const idSpan = document.createElement("div");
+        idSpan.className = "tx-id";
+        idSpan.textContent = shortenTxid(tx.txid);
+
+        const amtSpan = document.createElement("div");
+        amtSpan.className = "tx-amount";
+        amtSpan.textContent = tx.amount || "—";
+
+        header.appendChild(idSpan);
+        header.appendChild(amtSpan);
+        card.appendChild(header);
+
+        const metaRow = document.createElement("div");
+        metaRow.className = "tx-meta-row";
+
+        if (tx.mined_height !== undefined) {
+          const h = document.createElement("span");
+          h.innerHTML = `<span class="tx-meta-label">Height</span> ${tx.mined_height}`;
+          metaRow.appendChild(h);
+        }
+
+        if (tx.mined_time) {
+          const t = document.createElement("span");
+          t.innerHTML = `<span class="tx-meta-label">Mined</span> ${tx.mined_time}`;
+          metaRow.appendChild(t);
+        }
+
+        if (tx.note_summary) {
+          const ns = document.createElement("span");
+          ns.innerHTML = `<span class="tx-meta-label">Notes</span> ${tx.note_summary}`;
+          metaRow.appendChild(ns);
+        }
+
+        if (metaRow.childNodes.length) {
+          card.appendChild(metaRow);
+        }
+
+        if (tx.outputs && tx.outputs.length) {
+          tx.outputs.forEach((out) => {
+            const outDiv = document.createElement("div");
+            outDiv.className = "tx-output";
+
+            const heading = document.createElement("div");
+            heading.className = "tx-output-heading";
+            const idx = out.index !== undefined ? `#${out.index}` : "";
+            const pool = out.pool ? ` · ${out.pool}` : "";
+            heading.textContent = `Output ${idx}${pool}`;
+            outDiv.appendChild(heading);
+
+            if (out.value) {
+              const f = document.createElement("div");
+              f.className = "tx-output-field";
+              f.innerHTML = `<span class="label">Value:</span> ${out.value}`;
+              outDiv.appendChild(f);
+            }
+
+            if (out.account) {
+              const f = document.createElement("div");
+              f.className = "tx-output-field";
+              f.innerHTML = `<span class="label">Account:</span> ${out.account}`;
+              outDiv.appendChild(f);
+            }
+
+            if (out.to) {
+              const f = document.createElement("div");
+              f.className = "tx-output-field";
+              f.innerHTML = `<span class="label">To:</span> ${out.to}`;
+              outDiv.appendChild(f);
+            }
+
+            if (out.memo) {
+              const f = document.createElement("div");
+              f.className = "tx-output-field";
+              f.innerHTML = `<span class="label">Memo:</span> ${out.memo}`;
+              outDiv.appendChild(f);
+            }
+
+            card.appendChild(outDiv);
+          });
+        }
+
+        structuredOutput.appendChild(card);
+      });
+    }
+
+    toggleRawBtn.addEventListener("click", () => {
+      const visible = rawOutputWrapper.style.display !== "none";
+      rawOutputWrapper.style.display = visible ? "none" : "block";
+      toggleRawBtn.textContent = visible ? "Show raw text" : "Hide raw text";
+    });
+
+    vkForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const viewKey = viewKeyInput.value.trim();
+      const birthday = birthdayInput.value.trim();
+      const walletName = walletNameInput.value.trim() || "webwallet";
+
+      if (!viewKey || !birthday) {
+        setStatus("Please provide both a viewing key and a birthday height.", true);
+        return;
+      }
+
+      outputSection.style.display = "none";
+      structuredOutput.innerHTML = "";
+      rawOutput.textContent = "";
+
+      startBtn.disabled = true;
+      viewKeyInput.disabled = true;
+      birthdayInput.disabled = true;
+      setStatus("Running wallet sync and exporting transactions… this can take a while.");
+
+      try {
+        const res = await fetch(`${API_BASE}/api/import`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            view_key: viewKey,
+            birthday: Number(birthday),
+            wallet_name: walletName
+          })
+        });
+
+        const data = await res.json();
+        if (!res.ok || data.status !== "ok") {
+          setStatus(data.error || "Unknown error from backend.", true);
+          return;
+        }
+
+        outputMeta.textContent =
+          ` · ${data.file || ""} · birthday ${data.birthday}` +
+          (data.transactions ? ` · ${data.transactions.length} tx` : "");
+
+        renderTransactions(data.transactions || []);
+        rawOutput.textContent = data.raw_text || "";
+        rawOutputWrapper.style.display = "none";
+        toggleRawBtn.textContent = "Show raw text";
+
+        outputSection.style.display = "block";
+        setStatus("Done. Transactions loaded.");
+      } catch (err) {
+        console.error(err);
+        setStatus("Request failed. See server console for details.", true);
+      } finally {
+        startBtn.disabled = false;
+        viewKeyInput.disabled = false;
+        birthdayInput.disabled = false;
+      }
+    });
+
+    // optional: try to get height on load
+    refreshHeight();
+  </script>
+</body>
+</html>
