@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <title>Zcash Viewing Key</title>
+  <link rel="icon" type="image/png" href="/favicon.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     :root {
@@ -15,6 +16,7 @@
       --text: #e5e7eb;
       --muted: #9ca3af;
       --danger: #f97373;
+      --success: #4ade80; /* Green for success */
       --input-bg: #050814;
       --input-border: #20263a;
       --input-border-focus: #4f46e5;
@@ -371,86 +373,105 @@
       font-family: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
     }
 
-    /* Preset pills -------------------------------------------------- */
+    /* === PRESET CARDS (footer) === */
 
     .preset-row {
-      margin-top: 6px;
-      margin-bottom: 6px;
+      margin-top: 8px;
+      margin-bottom: 10px;
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
+      gap: 12px;
       align-items: center;
     }
 
     .preset-row-label {
-      font-size: 11px;
+      font-size: 12px;
       color: var(--muted);
       margin-right: 4px;
     }
 
     .preset-pill {
+      flex: 1;
+      min-width: 320px;
+      min-height: 90px;
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      border-radius: 999px;
-      padding: 4px 8px 4px 10px;
-      background: rgba(15,23,42,0.95);
-      border: 1px solid rgba(148,163,184,0.35);
+      justify-content: space-between;
+      gap: 14px;
+      border-radius: 18px;
+      padding: 16px 20px;
+      background: rgba(15,23,42,0.85);
+      border: 1px solid rgba(148,163,184,0.45);
       cursor: pointer;
-      font-size: 11px;
-      line-height: 1.2;
+      line-height: 1.3;
+      transition: all 0.15s ease;
     }
 
     .preset-pill:hover {
-      border-color: rgba(129,140,248,0.9);
-      background: radial-gradient(circle at top left, #101827 0, #020617 65%);
+      border-color: rgba(129,140,248,0.7);
+      background: rgba(30, 41, 59, 0.9);
+      transform: translateY(-1px);
     }
 
     .preset-main {
       display: flex;
       flex-direction: column;
+      gap: 2px;
     }
 
     .preset-name {
       color: #e5e7ff;
-      font-weight: 500;
-      font-size: 11px;
+      font-weight: 600;
+      font-size: 14px;
     }
 
     .preset-short {
       font-family: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
       color: #9ca3ff;
-      font-size: 11px;
+      font-size: 13px;
     }
 
     .preset-actions {
       display: inline-flex;
       align-items: center;
-      gap: 4px;
-      margin-left: 4px;
+      gap: 6px;
+      margin-left: 8px;
+      padding-left: 12px;
+      border-left: 1px solid rgba(255,255,255,0.1);
     }
 
     .icon-btn {
-      border-radius: 999px;
-      border: 1px solid rgba(148,163,184,0.6);
-      background: rgba(15,23,42,0.9);
-      font-size: 11px;
-      padding: 2px 6px;
-      color: #e5e7eb;
+      border-radius: 6px;
+      border: 1px solid rgba(148,163,184,0.4);
+      background: rgba(15,23,42,0.5);
+      font-size: 12px;
+      padding: 4px 10px;
+      color: #cbd5e1;
       cursor: pointer;
+      transition: all 0.2s;
+      min-width: 36px;
+      text-align: center;
     }
 
     .icon-btn:hover {
-      border-color: rgba(191,219,254,0.9);
+      border-color: rgba(191,219,254,0.8);
       color: #fff;
+      background: rgba(59, 130, 246, 0.1);
     }
 
-    /* QR modal ------------------------------------------------------ */
+    .icon-btn.copied {
+      border-color: var(--success) !important;
+      color: var(--success) !important;
+      background: rgba(74, 222, 128, 0.1);
+    }
+
+    /* === QR MODAL === */
 
     .modal-backdrop {
       position: fixed;
       inset: 0;
-      background: rgba(15,23,42,0.85);
+      background: rgba(0,0,0,0.75);
+      backdrop-filter: blur(4px);
       display: none;
       align-items: center;
       justify-content: center;
@@ -460,35 +481,75 @@
     .modal {
       background: #020617;
       border-radius: 18px;
-      padding: 20px 24px 18px;
+      padding: 24px;
       border: 1px solid rgba(148,163,184,0.5);
       box-shadow:
         0 20px 50px rgba(0,0,0,0.8),
         0 0 0 1px rgba(15,23,42,0.9);
-      max-width: 320px;
+      max-width: 340px;
       width: 100%;
       text-align: center;
     }
 
     .modal-title {
-      font-size: 14px;
+      font-size: 16px;
+      font-weight: 600;
       margin-bottom: 4px;
+      color: #fff;
     }
 
     .modal-subtitle {
-      font-size: 11px;
+      font-size: 12px;
       color: var(--muted);
-      margin-bottom: 10px;
+      margin-bottom: 16px;
     }
 
     #qrCode {
-      margin: 8px auto 10px;
+      margin: 16px auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #fff;
+      padding: 10px;
+      border-radius: 8px;
+      width: fit-content;
     }
 
     .modal-close-btn {
+      margin-top: 12px;
+      font-size: 13px;
+      padding: 8px 20px;
+    }
+
+    /* === FOOTER / DONATION SECTION === */
+
+    .app-footer {
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px solid rgba(148,163,184,0.15);
+    }
+
+    .footer-title {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+    }
+
+    /* NEW: footer copy status line */
+    .footer-copy-status {
       margin-top: 8px;
       font-size: 11px;
-      padding: 6px 14px;
+      color: var(--muted);
+      min-height: 14px; /* keeps layout stable */
+    }
+    .footer-copy-status.success {
+      color: var(--success);
+    }
+    .footer-copy-status.error {
+      color: var(--danger);
     }
 
     @media (max-width: 768px) {
@@ -500,7 +561,12 @@
         align-items: stretch;
       }
       .preset-row {
-        align-items: flex-start;
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .preset-pill {
+        width: 100%;
+        justify-content: space-between;
       }
     }
   </style>
@@ -512,18 +578,12 @@
       <div class="subtitle">
         <div>
           Paste a Unified Viewing Key (UFVK), choose a start (birthday) height,
-          then click <strong>Start importing</strong>. The backend will:
+          then click <strong>Start importing</strong>.
         </div>
-        <ul>
-          <li>talk to lightwalletd at <code>zec.rocks:443</code>, and</li>
-          <li>run <code>zcash-devtool</code> to scan your UFVK.</li>
-        </ul>
       </div>
 
       <div class="top-row">
         <div class="status-line">
-          <span class="key">chain:</span> <span id="chainStatus" class="error">error</span>
-          <span style="opacity:.35;">·</span>
           <span class="key">height:</span> <span id="heightStatus" class="error">error</span>
         </div>
         <button type="button" class="pill-btn" id="refreshHeightBtn">Refresh height</button>
@@ -532,15 +592,11 @@
       <form id="vkForm">
         <label for="viewKey">Zcash Viewing Key (UFVK)</label>
 
-        <!-- Quick preset pills -->
-        <div class="preset-row" id="presetRow">
-          <span class="preset-row-label">Quick presets:</span>
-          <!-- pills injected by JS -->
-        </div>
+        <!-- PRESETS NOW ONLY IN FOOTER -->
 
         <textarea id="viewKey" name="viewKey" placeholder="uview1..." required></textarea>
         <div class="hint">
-          Use one of the presets above or paste your own UFVK.
+          Use a preset UFVK or paste your own.
         </div>
 
         <div class="height-row">
@@ -571,38 +627,38 @@
           <div class="hint">Output of <code>list-tx</code></div>
         </div>
 
-        <!-- Structured cards -->
         <div id="structuredOutput" class="tx-list"></div>
 
-        <!-- Raw text toggle -->
         <div class="raw-toggle">
           <span>Debug / raw output</span>
           <button type="button" id="toggleRawBtn" class="raw-btn">Show raw text</button>
         </div>
 
-        <!-- Raw text -->
         <pre id="rawOutput" style="display:none;"><code></code></pre>
       </div>
+
+      <!-- FOOTER WITH CARDS + STATUS UNDER THEM -->
+      <footer class="app-footer">
+        <div class="footer-title">Addresses for verification / donation</div>
+        <div class="preset-row" id="presetRow"></div>
+        <div id="footerCopyStatus" class="footer-copy-status"></div> <!-- NEW -->
+      </footer>
+
     </section>
   </main>
 
-  <!-- QR modal -->
   <div class="modal-backdrop" id="qrBackdrop">
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="qrTitle">
-      <div class="modal-title" id="qrTitle">Scan viewing key</div>
+      <div class="modal-title" id="qrTitle">Scan UAddress</div>
       <div class="modal-subtitle" id="qrSubtitle"></div>
       <div id="qrCode"></div>
       <button type="button" class="pill-btn modal-close-btn" id="qrCloseBtn">Close</button>
     </div>
   </div>
 
-  <!-- QRCode library -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
   <script>
-    const API_BASE = "https://view.zcash.me";
-
-    const chainStatus = document.getElementById("chainStatus");
     const heightStatus = document.getElementById("heightStatus");
     const refreshHeightBtn = document.getElementById("refreshHeightBtn");
 
@@ -625,18 +681,21 @@
     const qrCloseBtn = document.getElementById("qrCloseBtn");
     const qrSubtitle = document.getElementById("qrSubtitle");
     const qrCodeContainer = document.getElementById("qrCode");
+    const footerCopyStatus = document.getElementById("footerCopyStatus"); // NEW
+
+    const DEMO_VIEW_KEY = "uview19dtdmw4m87e780c838v0etahyq3umv2gjvlcgyugxx8vf37h7kp38m9x8p7xgmmyh2vuapa84v2v4vxmzkwsf6q4z693acwk67029szwt4dy5x6aq49ru3h2m2fwa79luk9qwskkc9tksahn5znd0w2nhsahdrghfavaepxtwf9qrk86f00l6r088lcy2jdhssvhr74xjt5s03xxuvu6k95cfkx9n9dm4yld9hx9g8qq0us37vnw78xsk6u9n7uek5avw5cnzvx8nyhc6jrlpty9ndtluhm0tf70tnrz3lmj2ry0j5q62hns875cj6lrleeqr98eqtyj8pdeftlhe2x6ea7e4dtnu6h2uf7j92d70ev7relr8j2y3g8pm05pn7y43l32acc2l7762u99qm06zv8hy0dgessegp3duzqcxva0knlgjayfdsp50ga23gjlerxcy354mr2hgt5p6gpaehg4xkrxmhedd58pdlswcfeldculn4jf";
+    const DEMO_BIRTHDAY = "2600000";
 
     // === PRESET KEYS ==================================================
-    // TODO: replace full values with your real UFVKs
     const PRESET_KEYS = {
       lightDonation: {
         id: "lightDonation",
-        name: "Lightwallet donation view key",
+        name: "Lightwallet Donation",
         full: "u1u9davkqmhsnk4q0e6nrusyr6kex5yftuk58jzcjgywyvt0qcv42c4ya4pwhcs48x8nr3xpk0ftagqqsdlxxjwekfldguxydc352q9gu5qpe97y6ggprc2q9je02rhjljm5aqedkqcddlycfewqdyk6uxejcjcwurm6xl2mhqwlv9qak7ptlzpfz2d64dlemuu2x4ph6jl9zvgsj8z0e"
       },
       zcashmeVerify: {
         id: "zcashmeVerify",
-        name: "ZcashMe verification view key",
+        name: "ZcashMe Verify",
         full: "u1qzt502u9fwh67s7an0e202c35mm0h534jaa648t4p2r6mhf30guxjjqwlkmvthahnz5myz2ev7neff5pmveh54xszv9njcmu5g2eent82ucpd3lwyzkmyrn6rytwsqefk475hl5tl4tu8yehc0z8w9fcf4zg6r03sq7lldx0uxph7c0lclnlc4qjwhu2v52dkvuntxr8tmpug3jntvm"
       }
     };
@@ -651,10 +710,18 @@
       statusMsg.classList.toggle("error", !!isError);
     }
 
+    // NEW helper: status under the footer cards
+    function setFooterCopyStatus(msg, type = "normal") {
+      if (!footerCopyStatus) return;
+      footerCopyStatus.textContent = msg || "";
+      footerCopyStatus.classList.remove("success", "error");
+      if (type === "success") footerCopyStatus.classList.add("success");
+      if (type === "error") footerCopyStatus.classList.add("error");
+    }
+
     function initPresetUI() {
       Object.values(PRESET_KEYS).forEach(preset => {
         if (!preset.full || preset.full.startsWith("uview1_REPLACE")) {
-          // If user hasn't configured real key yet, skip rendering this preset
           return;
         }
 
@@ -682,13 +749,11 @@
         const qrBtn = document.createElement("button");
         qrBtn.type = "button";
         qrBtn.className = "icon-btn preset-qr";
-        qrBtn.dataset.presetId = preset.id;
         qrBtn.textContent = "QR";
 
         const copyBtn = document.createElement("button");
         copyBtn.type = "button";
         copyBtn.className = "icon-btn preset-copy";
-        copyBtn.dataset.presetId = preset.id;
         copyBtn.textContent = "⧉";
 
         actions.appendChild(qrBtn);
@@ -697,27 +762,30 @@
         pill.appendChild(main);
         pill.appendChild(actions);
 
-        // Clicking main area loads the key into textarea
-        main.addEventListener("click", () => {
-          viewKeyInput.value = preset.full;
-          viewKeyInput.focus();
-          setStatus(`Loaded ${preset.name} into the viewing key field.`);
-        });
-
         // QR click
         qrBtn.addEventListener("click", (e) => {
           e.stopPropagation();
           openQrForPreset(preset);
         });
 
-        // Copy click
+        // Copy click – NOW USES FOOTER STATUS
         copyBtn.addEventListener("click", async (e) => {
           e.stopPropagation();
           try {
             await navigator.clipboard.writeText(preset.full);
-            setStatus(`Copied ${preset.name} to clipboard.`);
+            const originalText = copyBtn.textContent;
+            copyBtn.textContent = "Copied!";
+            copyBtn.classList.add("copied");
+
+            // show message under the two cards
+            setFooterCopyStatus(`Copied ${preset.name} to clipboard.`, "success");
+
+            setTimeout(() => {
+              copyBtn.textContent = originalText;
+              copyBtn.classList.remove("copied");
+            }, 3000);
           } catch {
-            setStatus("Could not copy to clipboard (browser blocked).", true);
+            setFooterCopyStatus("Could not copy to clipboard (browser blocked).", "error");
           }
         });
 
@@ -734,8 +802,8 @@
       qrCodeContainer.innerHTML = "";
       qrInstance = new QRCode(qrCodeContainer, {
         text: preset.full,
-        width: 220,
-        height: 220,
+        width: 240,
+        height: 240,
         correctLevel: QRCode.CorrectLevel.M
       });
       qrBackdrop.style.display = "flex";
@@ -759,30 +827,27 @@
     async function refreshHeight() {
       try {
         refreshHeightBtn.disabled = true;
-        chainStatus.textContent = "loading…";
         heightStatus.textContent = "loading…";
-        const res = await fetch(`${API_BASE}/api/height`);
+        heightStatus.classList.remove("error");
+
+        const res = await fetch(`/api/height`);
         const data = await res.json();
+
         if (data.status === "ok") {
-          chainStatus.textContent = data.chain || "zec.rocks";
           heightStatus.textContent = data.height ?? "unknown";
-          chainStatus.classList.remove("error");
           heightStatus.classList.remove("error");
         } else {
-          chainStatus.textContent = "error";
           heightStatus.textContent = "error";
-          chainStatus.classList.add("error");
           heightStatus.classList.add("error");
         }
       } catch (e) {
-        chainStatus.textContent = "error";
         heightStatus.textContent = "error";
-        chainStatus.classList.add("error");
         heightStatus.classList.add("error");
       } finally {
         refreshHeightBtn.disabled = false;
       }
     }
+
 
     refreshHeightBtn.addEventListener("click", refreshHeight);
 
@@ -923,7 +988,7 @@
       setStatus("Running wallet sync and exporting transactions… this can take a while.");
 
       try {
-        const res = await fetch(`${API_BASE}/api/import`, {
+        const res = await fetch(`/api/import`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
@@ -951,6 +1016,8 @@
         toggleRawBtn.textContent = "Show raw text";
 
         outputSection.style.display = "block";
+
+        setFooterCopyStatus("", "normal"); // clear copy status after run if you want
         setStatus("Done. Transactions loaded.");
       } catch (err) {
         console.error(err);
@@ -965,7 +1032,11 @@
     // boot
     initPresetUI();
     refreshHeight();
+
+    if (!DEMO_VIEW_KEY.includes("PASTE_YOUR")) {
+      viewKeyInput.value = DEMO_VIEW_KEY;
+      birthdayInput.value = DEMO_BIRTHDAY;
+    }
   </script>
 </body>
 </html>
-
