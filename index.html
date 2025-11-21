@@ -234,33 +234,30 @@
     }
 
     .tx-card {
-    background: #020617;
-    border-radius: 14px;
-    border: 1px solid #111827;
-    padding: 12px 14px;
-    font-size: 13px;          /* bigger */
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    overflow: hidden;         /* nothing escapes the box */
-
-    /* New: subtle default shadow + smooth hover transitions */
-    box-shadow:
+      background: #020617;
+      border-radius: 14px;
+      border: 1px solid #111827;
+      padding: 12px 14px;
+      font-size: 13px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      overflow: hidden;
+      box-shadow:
         0 8px 20px rgba(15, 23, 42, 0.55),
         0 0 0 1px rgba(15, 23, 42, 0.9);
-    transition:
+      transition:
         transform 0.12s ease,
         box-shadow 0.12s ease,
         background 0.12s ease,
         border-color 0.12s ease;
     }
 
-    /* ADD this block right after .tx-card */
     .tx-card:hover {
-    transform: translateY(-2px);
-    background: radial-gradient(circle at top left, #020617 0, #020617 40%, #020617 100%);
-    border-color: rgba(129, 140, 248, 0.6);
-    box-shadow:
+      transform: translateY(-2px);
+      background: radial-gradient(circle at top left, #020617 0, #020617 40%, #020617 100%);
+      border-color: rgba(129, 140, 248, 0.6);
+      box-shadow:
         0 18px 45px rgba(15, 23, 42, 0.9),
         0 0 0 1px rgba(129, 140, 248, 0.55);
     }
@@ -276,7 +273,7 @@
       font-family: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
       font-size: 12px;
       color: #c7d2fe;
-      word-break: break-all;        /* wrap long ids */
+      word-break: break-all;
       overflow-wrap: anywhere;
     }
 
@@ -317,11 +314,11 @@
     }
 
     .tx-output-field {
-      font-size: 12px;              /* bigger */
+      font-size: 12px;
       color: var(--muted);
       margin-top: 1px;
-      white-space: normal;          /* allow wrapping */
-      word-break: break-all;        /* wrap long addresses/memos */
+      white-space: normal;
+      word-break: break-all;
       overflow-wrap: anywhere;
     }
 
@@ -374,6 +371,126 @@
       font-family: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
     }
 
+    /* Preset pills -------------------------------------------------- */
+
+    .preset-row {
+      margin-top: 6px;
+      margin-bottom: 6px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .preset-row-label {
+      font-size: 11px;
+      color: var(--muted);
+      margin-right: 4px;
+    }
+
+    .preset-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 999px;
+      padding: 4px 8px 4px 10px;
+      background: rgba(15,23,42,0.95);
+      border: 1px solid rgba(148,163,184,0.35);
+      cursor: pointer;
+      font-size: 11px;
+      line-height: 1.2;
+    }
+
+    .preset-pill:hover {
+      border-color: rgba(129,140,248,0.9);
+      background: radial-gradient(circle at top left, #101827 0, #020617 65%);
+    }
+
+    .preset-main {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .preset-name {
+      color: #e5e7ff;
+      font-weight: 500;
+      font-size: 11px;
+    }
+
+    .preset-short {
+      font-family: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+      color: #9ca3ff;
+      font-size: 11px;
+    }
+
+    .preset-actions {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-left: 4px;
+    }
+
+    .icon-btn {
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.6);
+      background: rgba(15,23,42,0.9);
+      font-size: 11px;
+      padding: 2px 6px;
+      color: #e5e7eb;
+      cursor: pointer;
+    }
+
+    .icon-btn:hover {
+      border-color: rgba(191,219,254,0.9);
+      color: #fff;
+    }
+
+    /* QR modal ------------------------------------------------------ */
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15,23,42,0.85);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+    }
+
+    .modal {
+      background: #020617;
+      border-radius: 18px;
+      padding: 20px 24px 18px;
+      border: 1px solid rgba(148,163,184,0.5);
+      box-shadow:
+        0 20px 50px rgba(0,0,0,0.8),
+        0 0 0 1px rgba(15,23,42,0.9);
+      max-width: 320px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .modal-title {
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+
+    .modal-subtitle {
+      font-size: 11px;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+
+    #qrCode {
+      margin: 8px auto 10px;
+    }
+
+    .modal-close-btn {
+      margin-top: 8px;
+      font-size: 11px;
+      padding: 6px 14px;
+    }
+
     @media (max-width: 768px) {
       .panel {
         padding: 24px 18px 24px;
@@ -381,6 +498,9 @@
       .height-row {
         flex-direction: column;
         align-items: stretch;
+      }
+      .preset-row {
+        align-items: flex-start;
       }
     }
   </style>
@@ -411,9 +531,16 @@
 
       <form id="vkForm">
         <label for="viewKey">Zcash Viewing Key (UFVK)</label>
+
+        <!-- Quick preset pills -->
+        <div class="preset-row" id="presetRow">
+          <span class="preset-row-label">Quick presets:</span>
+          <!-- pills injected by JS -->
+        </div>
+
         <textarea id="viewKey" name="viewKey" placeholder="uview1..." required></textarea>
         <div class="hint">
-          This never leaves your machine if you keep this app running locally.
+          Use one of the presets above or paste your own UFVK.
         </div>
 
         <div class="height-row">
@@ -459,6 +586,19 @@
     </section>
   </main>
 
+  <!-- QR modal -->
+  <div class="modal-backdrop" id="qrBackdrop">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="qrTitle">
+      <div class="modal-title" id="qrTitle">Scan viewing key</div>
+      <div class="modal-subtitle" id="qrSubtitle"></div>
+      <div id="qrCode"></div>
+      <button type="button" class="pill-btn modal-close-btn" id="qrCloseBtn">Close</button>
+    </div>
+  </div>
+
+  <!-- QRCode library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
   <script>
     const API_BASE = "https://view.zcash.me";
 
@@ -480,10 +620,141 @@
     const rawOutputWrapper = document.getElementById("rawOutput");
     const toggleRawBtn = document.getElementById("toggleRawBtn");
 
+    const presetRow = document.getElementById("presetRow");
+    const qrBackdrop = document.getElementById("qrBackdrop");
+    const qrCloseBtn = document.getElementById("qrCloseBtn");
+    const qrSubtitle = document.getElementById("qrSubtitle");
+    const qrCodeContainer = document.getElementById("qrCode");
+
+    // === PRESET KEYS ==================================================
+    // TODO: replace full values with your real UFVKs
+    const PRESET_KEYS = {
+      lightDonation: {
+        id: "lightDonation",
+        name: "Lightwallet donation view key",
+        full: "uview1_REPLACE_WITH_LIGHT_DONATION_KEY"
+      },
+      zcashmeVerify: {
+        id: "zcashmeVerify",
+        name: "ZcashMe verification view key",
+        full: "uview1_REPLACE_WITH_ZCASHME_VERIFICATION_KEY"
+      }
+    };
+
+    function shortenKey(key) {
+      if (!key || key.length <= 16) return key || "";
+      return key.slice(0, 6) + "…" + key.slice(-6);
+    }
+
     function setStatus(msg, isError = false) {
       statusMsg.textContent = msg || "";
       statusMsg.classList.toggle("error", !!isError);
     }
+
+    function initPresetUI() {
+      Object.values(PRESET_KEYS).forEach(preset => {
+        if (!preset.full || preset.full.startsWith("uview1_REPLACE")) {
+          // If user hasn't configured real key yet, skip rendering this preset
+          return;
+        }
+
+        const pill = document.createElement("div");
+        pill.className = "preset-pill";
+        pill.dataset.presetId = preset.id;
+
+        const main = document.createElement("div");
+        main.className = "preset-main";
+
+        const nameSpan = document.createElement("span");
+        nameSpan.className = "preset-name";
+        nameSpan.textContent = preset.name;
+
+        const shortSpan = document.createElement("span");
+        shortSpan.className = "preset-short";
+        shortSpan.textContent = shortenKey(preset.full);
+
+        main.appendChild(nameSpan);
+        main.appendChild(shortSpan);
+
+        const actions = document.createElement("div");
+        actions.className = "preset-actions";
+
+        const qrBtn = document.createElement("button");
+        qrBtn.type = "button";
+        qrBtn.className = "icon-btn preset-qr";
+        qrBtn.dataset.presetId = preset.id;
+        qrBtn.textContent = "QR";
+
+        const copyBtn = document.createElement("button");
+        copyBtn.type = "button";
+        copyBtn.className = "icon-btn preset-copy";
+        copyBtn.dataset.presetId = preset.id;
+        copyBtn.textContent = "⧉";
+
+        actions.appendChild(qrBtn);
+        actions.appendChild(copyBtn);
+
+        pill.appendChild(main);
+        pill.appendChild(actions);
+
+        // Clicking main area loads the key into textarea
+        main.addEventListener("click", () => {
+          viewKeyInput.value = preset.full;
+          viewKeyInput.focus();
+          setStatus(`Loaded ${preset.name} into the viewing key field.`);
+        });
+
+        // QR click
+        qrBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          openQrForPreset(preset);
+        });
+
+        // Copy click
+        copyBtn.addEventListener("click", async (e) => {
+          e.stopPropagation();
+          try {
+            await navigator.clipboard.writeText(preset.full);
+            setStatus(`Copied ${preset.name} to clipboard.`);
+          } catch {
+            setStatus("Could not copy to clipboard (browser blocked).", true);
+          }
+        });
+
+        presetRow.appendChild(pill);
+      });
+    }
+
+    // === QR MODAL =====================================================
+
+    let qrInstance = null;
+
+    function openQrForPreset(preset) {
+      qrSubtitle.textContent = preset.name;
+      qrCodeContainer.innerHTML = "";
+      qrInstance = new QRCode(qrCodeContainer, {
+        text: preset.full,
+        width: 220,
+        height: 220,
+        correctLevel: QRCode.CorrectLevel.M
+      });
+      qrBackdrop.style.display = "flex";
+    }
+
+    function closeQrModal() {
+      qrBackdrop.style.display = "none";
+      qrCodeContainer.innerHTML = "";
+      qrInstance = null;
+    }
+
+    qrCloseBtn.addEventListener("click", closeQrModal);
+    qrBackdrop.addEventListener("click", (e) => {
+      if (e.target === qrBackdrop) {
+        closeQrModal();
+      }
+    });
+
+    // === HEIGHT / API =================================================
 
     async function refreshHeight() {
       try {
@@ -691,10 +962,9 @@
       }
     });
 
-    // optional: try to get height on load
+    // boot
+    initPresetUI();
     refreshHeight();
   </script>
 </body>
 </html>
-
-
