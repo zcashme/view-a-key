@@ -1,0 +1,184 @@
+# **Zcash Viewing Key Explorer — Refactored**
+
+A refactored version of the Zcash viewing-key explorer, split into a clear **backend** (Flask) and **frontend** (HTML/CSS/JS modules).
+
+The UI lets you paste a **Unified Viewing Key (UFVK)**, pick a **birthday height**, and see parsed transactions in a modern, filterable interface.
+
+---
+
+# 📁 Project Structure
+
+```text
+zcash-viewer/
+│
+├── backend/
+│   ├── app.py            # Flask app (API routes + static file serving)
+│   ├── config.py         # Paths, constants, simple config helpers
+│   ├── jobs.py           # Background job registry + helpers
+│   ├── read_view_key.py  # Thin wrapper around zcash-devtool
+│   ├── tx_parser.py      # Parses list-tx output into structured JSON
+│   ├── wallet_utils.py   # Shared helpers (wallet slug, birthday filtering, etc.)
+│   │
+│   ├── exports/          # Auto-created. list-tx .txt exports go here
+│   └── wallets/          # Auto-created. Per-UFVK wallet directories
+│
+├── frontend/
+│   ├── index.html        # UI shell for the viewing key page
+│   └── assets/
+│       ├── css/
+│       │   └── styles.css    # Full styling for the viewer UI
+│       └── js/
+│           ├── main.js       # Entry point, wires UI ↔ backend API
+│           ├── api.js        # Small fetch helpers for /api/* endpoints
+│           ├── components.js # DOM render helpers (cards, lists, etc.)
+│           ├── hooks.js      # Light “state” + polling helpers
+│           └── utils.js      # Formatting, helpers (duration, truncation, etc.)
+│
+└── README.md
+```
+
+---
+
+# 🚀 Getting Started
+
+## 1. Requirements
+
+* Python **3.9+**
+* `pip` (or `pipx`, `pipenv`, `poetry`, etc.)
+
+### Python dependencies
+
+From the **project root**:
+
+```bash
+pip install flask flask-cors requests
+```
+
+(Everything else is from the standard library.)
+
+---
+
+## 2. Running the Backend Server
+
+From the **project root**, start the Flask app:
+
+```bash
+cd backend
+python app.py
+```
+
+By default this will:
+
+* Start the server on `http://127.0.0.1:5000/`
+* Serve **`frontend/index.html`** at `/`
+* Serve static assets from `frontend/assets/`
+* Expose API endpoints under `/api/...`:
+
+  * `GET /api/height` — current Zcash chain height (Blockchair)
+  * `POST /api/import` — start a UFVK sync job
+  * `GET  /api/job/<job_id>` — poll job status (progress, results)
+
+Then open in your browser:
+
+```text
+http://127.0.0.1:5000/
+```
+
+You should see the **“Zcash Viewing Key”** page with a height indicator and a “Start importing” button.
+
+---
+
+# 🔧 zcash-devtool (Required for Real Transactions)
+
+The backend does **not** ship with the actual Zcash wallet / decoder logic.
+Instead, `read_view_key.py` shells out to an external tool:
+
+✅ **`zcash-devtool`**
+
+Because it’s large and platform-specific, it is **not included** in this repo.
+
+Without it, imports will fail with an error similar to:
+
+```text
+Error: zcash-devtool path not found at: <project>/backend/zcash-devtool
+Please make sure the 'zcash-devtool' folder is in the same directory as this script.
+```
+
+When that happens:
+
+* The UI still works
+* The **progress bar and “steps” indicators** still animate
+* But the job ends with an error and **no transactions** are displayed
+
+# 🖥 Using the Viewer
+
+1. Open `http://127.0.0.1:5000/` in your browser.
+
+2. You should see:
+
+   * Current **height** at the top (from `/api/height`).
+   * A **UFVK textarea**.
+   * A **Start (birthday) height** input.
+   * Sample UFVK cards at the bottom (“Lightwallet Donation UFVK”, “ZcashMe Verification UFVK”).
+
+3. To test quickly:
+
+   * Click one of the sample cards — it auto-fills the UFVK + birthday.
+   * Click **“Start importing”**.
+
+4. While the job runs:
+
+   * The **button + inputs are disabled**.
+   * A **progress bar** at the bottom of the form moves from ~5% up to ~80% (cosmetic).
+   * A **step indicator** below the form shows:
+
+     * Starting wallet
+     * Scanning chain
+     * Parsing results
+     * Ready
+
+5. When complete (and `zcash-devtool` is configured):
+
+   * The **Transactions** card appears.
+   * You can:
+
+     * Filter by memo / txid / amount / address.
+     * Filter by **height range** (From / To).
+     * Sort by height, time, or amount.
+     * Paginate (10/25/50 per page) or “Show all”.
+     * Export to **JSON**, **CSV**, or raw **.txt**.
+     * Toggle and copy the raw `list-tx` output.
+
+If `zcash-devtool` is **not** installed, the UI still shows progress, but eventually a friendly error appears under the form (mapping the backend error into something human-readable).
+
+---
+
+# 🗂 Data & Caching
+
+* **`backend/wallets/`**
+
+  * One subfolder per viewing key (`vk_<hash>`).
+  * Contains the wallet database and cache used by `zcash-devtool`.
+  * Re-running with the same UFVK + higher birthday reuses the same folder and is much faster.
+
+* **`backend/exports/`**
+
+  * Raw `list-tx` output (`vk_<hash>_txs.txt`).
+  * Used for parsing and for “Download .txt” from the UI.
+
+You can safely delete either folder to force a full rescan (next import for that UFVK will be slower but clean).
+
+---
+
+# Key Frontend Files for Review
+
+| File                               | Purpose                                              |
+| ---------------------------------- | ---------------------------------------------------- |
+| `frontend/index.html`              | Page shell, layout, and main form                    |
+| `frontend/assets/css/styles.css`   | Complete visual design for the viewer                |
+| `frontend/assets/js/main.js`       | Entry point; wires form, progress bar, results       |
+| `frontend/assets/js/api.js`        | Helpers for `/api/height`, `/api/import`, `/api/job` |
+| `frontend/assets/js/components.js` | Renders transaction cards, export buttons, etc.      |
+| `frontend/assets/js/hooks.js`      | Polling + state helpers (jobs, filters)              |
+| `frontend/assets/js/utils.js`      | Formatting (durations, truncation, CSV, etc.)        |
+
