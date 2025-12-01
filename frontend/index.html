@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Zcash Viewing Key</title>
+  <link rel="icon" type="image/png" href="/assets/img/favicon.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="/assets/css/styles.css" />
+</head>
+<body>
+  <main class="shell">
+    <section class="panel">
+      <h1>Zcash Viewing Key</h1>
+      <div class="subtitle">
+        <div>
+          Paste a Unified Viewing Key (UFVK), choose a start (birthday) height,
+          then click <strong>Start importing</strong>.
+        </div>
+      </div>
+
+      <div class="top-row">
+        <div class="status-line">
+          <span class="key">height:</span> <span id="heightStatus" class="error">error</span>
+        </div>
+        <button type="button" class="pill-btn" id="refreshHeightBtn">Refresh height</button>
+      </div>
+      <div class="hint">
+        Paste your own UFVK below, or scroll down and select a sample viewing key to fill the form automatically.
+      </div>
+
+      <form id="vkForm">
+        <label for="viewKey">UFVK</label>
+
+        <textarea id="viewKey" name="viewKey" placeholder="uview1..." required></textarea>
+
+        <div class="height-row">
+          <div class="field">
+            <label for="birthday">Start (birthday) height</label>
+            <input id="birthday" name="birthday" type="number" placeholder="3000000" required />
+          </div>
+          <div>
+            <label style="visibility:hidden;">&nbsp;</label>
+            <button type="submit" id="startBtn" class="primary-btn">Start importing</button>
+          </div>
+        </div>
+
+        <div class="hint">
+          Birthday height only matters on the first sync for a new viewing key. Presets can leave this as-is.
+        </div>
+        <input id="walletName" name="walletName" type="text" value="test" style="display:none;" />
+
+        <div id="statusMsg" class="status-msg"></div>
+        <div id="progressWrapper" class="progress-wrapper">
+          <div class="progress-bar"></div>
+        </div>
+        <div id="waitTip" class="hint" style="display:none; margin-top:4px;"></div>
+        <div id="steps" class="hint" style="margin-top:8px; font-size:12px;"></div>
+      </form>
+
+      <div id="outputSection" class="output-card" style="display:none;">
+        <div class="output-header">
+          <div>
+            <strong>Transactions</strong>
+            <span id="outputMeta"></span>
+          </div>
+          <div class="hint">Output of <code>list-tx</code></div>
+        </div>
+
+        <!-- FILTER / SORT TOOLBAR -->
+        <div class="output-toolbar">
+          <div class="filter-controls">
+            <input
+              id="filterInput"
+              class="filter-input"
+              type="text"
+              placeholder="Filter by memos, txid, amount, address…"
+            />
+            <div class="height-range">
+              <input
+                id="heightFromInput"
+                class="filter-input"
+                type="number"
+                placeholder="From height"
+              />
+              <input
+                id="heightToInput"
+                class="filter-input"
+                type="number"
+                placeholder="To height"
+              />
+            </div>
+          </div>
+
+          <div>
+            <select id="sortSelect" class="sort-select">
+              <option value="height_desc">Newest (height ↓)</option>
+              <option value="height_asc">Oldest (height ↑)</option>
+              <option value="amount_desc">Amount high → low</option>
+              <option value="amount_asc">Amount low → high</option>
+              <option value="time_desc">Time (newest)</option>
+              <option value="time_asc">Time (oldest)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- PAGINATION + PAGE SIZE + SHOW ALL -->
+        <div class="pagination" id="pagination">
+          <div class="page-controls">
+            <button type="button" class="page-btn" id="firstPageBtn">First</button>
+            <button type="button" class="page-btn" id="prevPageBtn">Previous</button>
+          </div>
+
+          <span class="page-info" id="pageInfo"></span>
+
+          <div class="page-extra">
+            <label class="page-size-label">
+              Per page
+              <select id="pageSizeSelect">
+                <option value="10" selected>10</option>
+                <option value="25">25</option>
+                <option value="50">50</option>
+              </select>
+            </label>
+            <label class="show-all-label">
+              <input type="checkbox" id="showAllCheckbox" />
+              Show all
+            </label>
+            <button type="button" class="page-btn" id="nextPageBtn">Next</button>
+            <button type="button" class="page-btn" id="lastPageBtn">Last</button>
+          </div>
+        </div>
+
+        <div id="structuredOutput" class="tx-list"></div>
+
+        <!-- EXPORT BAR -->
+        <div class="export-bar">
+          <span>Export:</span>
+          <button type="button" id="downloadRawBtn" class="export-btn">Download .txt</button>
+          <button type="button" id="downloadJsonBtn" class="export-btn">Download JSON</button>
+          <button type="button" id="downloadCsvBtn" class="export-btn">Download CSV</button>
+        </div>
+
+        <div class="raw-toggle">
+          <span>Debug / raw output</span>
+          <button type="button" id="copyRawBtn" class="raw-btn">Copy raw</button>
+          <button type="button" id="downloadRawFullBtn" class="raw-btn">Download raw</button>
+          <button type="button" id="toggleRawBtn" class="raw-btn">Show raw text</button>
+        </div>
+
+        <pre id="rawOutput" style="display:none;"><code></code></pre>
+      </div>
+
+      <footer class="app-footer">
+        <div class="footer-title">Sample viewing keys you can try</div>
+        <div class="preset-row" id="presetRow"></div>
+        <div id="presetStatus" class="hint" style="margin-top:8px;"></div>
+      </footer>
+    </section>
+  </main>
+
+  <!-- ENTRY SCRIPT -->
+  <script type="module" src="/assets/js/main.js"></script>
+</body>
+</html>
