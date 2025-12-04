@@ -195,7 +195,6 @@ You can safely delete either folder to force a full rescan (next import for that
 
 
 
-```markdown
 # Zcash Shielded Newsletter Tool
 
 The Zcash Newsletter application allows organizations or individuals to send
@@ -255,20 +254,19 @@ For larger distributions, split your content into multiple sends.
 
 Your sending address must cover:
 
-```
+
 
 Total Required = (sum of all recipient amounts)
 + transaction fee
 
-```
+
 
 Typical failure occurs when funds are insufficient:
 
-```
+
 
 Insufficient funds: have X, need Y
 
-```
 
 ---
 
@@ -284,11 +282,9 @@ Insufficient funds: have X, need Y
   Large batches may take more than 90 seconds to finalize.
 
   Manual status check:
-```
+
 
 zcash-cli z_getoperationstatus
-
-```
 
 - **Funds errors**  
 Ensure your sending address holds enough ZEC to cover total output + fee.
