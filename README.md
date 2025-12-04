@@ -256,8 +256,7 @@ Your sending address must cover:
 
 
 
-Total Required = (sum of all recipient amounts)
-+ transaction fee
+Total Required = (sum of all recipient amounts) + transaction fee
 
 
 
